@@ -1,5 +1,7 @@
 # The Advanced Example of The Shell Script Dialog For Ubuntu Server
 
+# In this example we supose that your Virtual Machine Can has many network interface.
+
 It is a advanced  example of a Shell Script dialog for Ubuntu server.
 
 ![](./imags/dialog_advanced.png)
