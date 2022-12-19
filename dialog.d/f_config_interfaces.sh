@@ -68,9 +68,8 @@ f_config_ip(){
         #Separates the line macs by space (" ") and takes one by key_mac
         get_first_mac=$(echo $my_macs | cut -d " " -f1)
 
-        #Rename the first ethernet        
-        sudo netplan set ethernets.eth0.match.macaddress="$get_first_mac"  2>/dev/null;
-        sudo netplan set ethernets.eth0.set-name=eth0 2>/dev/null;
+        #Rename the first ethernet 
+        sudo netplan set "network.ethernets.eth0={ set-name: "eth0", match: {name: "eth0", macaddress: "$get_first_mac"}}"  2>/dev/null;     
 
         # This loop add more interfaces, if exists
         i=1
@@ -86,8 +85,7 @@ f_config_ip(){
             #Separates the line macs by space (" ") and takes one by key_mac
             get_one_mac=$(echo $my_macs | cut -d " " -f$key_mac)
 
-            sudo netplan set ethernets.eth$i.match.macaddress="$get_one_mac" 2>/dev/null;
-            sudo netplan set ethernets.eth$i.set-name=eth$i 2>/dev/null;
+            sudo netplan set "network.ethernets.eth$i={ set-name: "eth$i", match: {name: "eth$i", macaddress: "$get_one_mac"}}"  2>/dev/null;     
         
             i=$((i+1)) #Increment i by 1
         done
@@ -110,9 +108,8 @@ f_config_ip(){
         #Separates the line macs by space (" ") and takes one by key_mac
         get_one_mac=$(echo $my_macs | cut -d " " -f$key_mac)
 
-        sudo netplan set ethernets.eth$selected_int.match.macaddress="$get_one_mac" 2>/dev/null;
-        sudo netplan set ethernets.eth$selected_int.set-name=eth$selected_int 2>/dev/null;
-        
+        sudo netplan set "network.ethernets.eth$selected_int={ set-name: "eth$selected_int", match: {name: "eth$selected_int", macaddress: "$get_one_mac"}}"  2>/dev/null;     
+       
     }
 
     #Applay the Settings for selected interface
@@ -129,11 +126,9 @@ f_config_ip(){
                 clear; echo "Starting apply configuration..............";
                 #Crelar all configuration brefore apply
                 sudo netplan set "network.ethernets.eth$selected_int={addresses: NULL, nameservers: NULL, gateway4: NULL, dhcp4: false, routes: NULL}" 2> /dev/null;
-
-                sudo netplan set ethernets.eth$selected_int.addresses=["$address$netmask"] 2> /dev/null;
-                sudo netplan set ethernets.eth$selected_int.gateway4="$gateway" 2> /dev/null;
-                sudo netplan set ethernets.eth$selected_int.nameservers.addresses=["$name_servers"] 2> /dev/null;
-                sudo netplan set ethernets.eth$selected_int.nameservers.search=[] 2> /dev/null;       
+                # Write the new Configurations
+                sudo netplan set "network.ethernets.eth$selected_int={addresses: ["$address$netmask"], gateway4: "$gateway", nameservers: { addresses: ["$name_servers"], search: [""]}}" 2> /dev/null ;
+                # Trat apply new configurations
                 sudo netplan try 2> /dev/null
             else
                 #Append interface input int the file
