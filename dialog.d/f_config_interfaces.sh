@@ -31,7 +31,6 @@ f_config_ip(){
             int_options="${int_options} ${i} Interface_Eth${i}"
             i=$((i+1)) #Increment i by 1
         done
-        echo $int_options
 
         selected_int=$(
             dialog --stdout               \
@@ -49,6 +48,77 @@ f_config_ip(){
         return 0
     }
     
+    f_select_action(){
+        selected_action="";
+        selected_action=$(
+            dialog --stdout               \
+            --backtitle "VM  $(hostname)"  \
+            --title "Interface Eth$selected_int"  \
+            --menu 'Select Configuration' \
+            0 0 0                         \
+            STAT "Static Configuration" \
+            DHCP "Enable DHCP"      \
+            DIS  "Disable Interface" )
+            
+        case "$selected_action" in
+            STAT) 
+                next_step='step2'
+                return 0
+            ;;
+            DHCP) 
+                can_save=$(dialog --stdout \
+                   --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
+                   --cr-wrap \
+                   --yesno "
+                       Do you want save this sattings?:
+
+                       Interface:      Eth$selected_int
+                       IP Address:     DHCP
+                  
+                   " 0 0)
+
+                if [ $? -eq 0 ] ; then
+                    # Enable DHCP 
+                    sudo netplan set "network.ethernets.eth$selected_int={addresses: NULL, nameservers: NULL, gateway4: NULL, dhcp4: true, routes: NULL}" 2> /dev/null;
+                    clear; sudo netplan try 2> /dev/null;
+                else
+                    next_step='step0'
+                    return 0
+                fi
+                return 1
+            ;;
+            DIS) 
+                can_save=$(dialog --stdout \
+                   --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
+                   --cr-wrap \
+                   --yesno "
+                       Do you want disable this interface?:
+
+                       Interface:      Eth$selected_int
+                       Disabled
+                   " 0 0)
+
+                if [ $? -eq 0 ] ; then
+                    # Disabling interfaces 
+                    sudo netplan set "network.ethernets.eth$selected_int={addresses: NULL, nameservers: NULL, gateway4: NULL, dhcp4: false, routes: NULL}" 2> /dev/null;
+                    clear; sudo netplan try 2> /dev/null;
+                else
+                    next_step='step0'
+                    return 0
+                fi
+                return 1
+            ;;
+        esac
+        
+        return=$?
+        # Exit if CALCEL button pressed
+        [ $return -eq 255   ] &&  return 1 # Esc
+        [ $return -eq 1 ] &&  return 1    # Cancel
+
+    }
+
     f_format_netplan_file(){
         #remove all networking file configuration
         sudo rm -rf /etc/netplan/* ;
@@ -154,39 +224,42 @@ f_config_ip(){
            #Fist step, get the ip address.
            step0)
                 next_step='step1' 
-                f_select_interface
+                f_select_interface;
                 ;;
            step1)
-                next_step='step2'
+                f_select_action;
+                ;;
+           step2)
+                next_step='step3'
                 address=$(dialog --stdout \
                    --max-input 15 \
                    --backtitle 'IP Configuration' \
                    --inputbox 'Enter with IP address: X.X.X.X'  0 0 "192.168.1.1")
                ;;
-           step2)
-               next_step='step3'
+           step3)
+               next_step='step4'
                netmask=$(dialog --stdout \
                    --max-input 3 \
                    --backtitle 'IP Configuration' \
                    --inputbox 'Enter With Mask (CIDR Prefix): /X'  0 0 "/24")
                ;;
-           step3)
-               next_step='step4'
+           step4)
+               next_step='step5'
                gateway=$(dialog --stdout \
                    --max-input 15 \
                    --backtitle 'IP Configuration' \
                    --inputbox 'Enter with IP Gateway: X.X.X.X'  0 0 "192.168.1.254")
                ;;
-           step4)
-               next_step='step5'
+           step5)
+               next_step='step6'
                name_servers=$(dialog --stdout \
                    --max-input 31 \
                    --backtitle 'IP Configuration' \
                    --inputbox 'Enter with the Servers Names IP: X.X.X.X, \
                       You can use (,) for separate the server Names'  0 0 "8.8.8.8")
                ;;
-           step5)
-               next_step='step6'
+           step6)
+               next_step='step7'
                can_save=$(dialog --stdout \
                    --backtitle 'IP Configuration' \
                    --title "Settings"     \
@@ -201,8 +274,8 @@ f_config_ip(){
                   
                    " 0 0)
                ;;
-           step6)
-               next_step='step1'
+           step7)
+               next_step='step0'
                dialog \
                    --cr-wrap \
                    --backtitle 'IP Configuration' \
