@@ -234,6 +234,7 @@ f_config_ip(){
                 address=$(dialog --stdout \
                    --max-input 15 \
                    --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
                    --inputbox 'Enter with IP address: X.X.X.X'  0 0 "192.168.1.1")
                ;;
            step3)
@@ -241,6 +242,7 @@ f_config_ip(){
                netmask=$(dialog --stdout \
                    --max-input 3 \
                    --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
                    --inputbox 'Enter With Mask (CIDR Prefix): /X'  0 0 "/24")
                ;;
            step4)
@@ -248,6 +250,7 @@ f_config_ip(){
                gateway=$(dialog --stdout \
                    --max-input 15 \
                    --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
                    --inputbox 'Enter with IP Gateway: X.X.X.X'  0 0 "192.168.1.254")
                ;;
            step5)
@@ -255,6 +258,7 @@ f_config_ip(){
                name_servers=$(dialog --stdout \
                    --max-input 31 \
                    --backtitle 'IP Configuration' \
+                   --title "Interface Eth$selected_int"     \
                    --inputbox 'Enter with the Servers Names IP: X.X.X.X, \
                       You can use (,) for separate the server Names'  0 0 "8.8.8.8")
                ;;
@@ -262,7 +266,7 @@ f_config_ip(){
                next_step='step7'
                can_save=$(dialog --stdout \
                    --backtitle 'IP Configuration' \
-                   --title "Settings"     \
+                   --title "Interface Eth$selected_int"     \
                    --cr-wrap \
                    --yesno "
                        Do you want save this sattings?:
@@ -279,7 +283,7 @@ f_config_ip(){
                dialog \
                    --cr-wrap \
                    --backtitle 'IP Configuration' \
-                   --title "Settings"  \
+                   --title "Interface Eth$selected_int"     \
                    --msgbox "
                        This settings will be saved:
 
