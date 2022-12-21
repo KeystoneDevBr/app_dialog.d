@@ -15,11 +15,12 @@ vm_information(){
    --title "VM Information" \
    --cr-wrap \
    --msgbox "
-   User:           $USER
-   IP:       $(hostname -I)
-   $(lsb_release -d )
+   VM Name:   $(hostname)
+   User:      $USER
+   Distribution: $(lsb_release -d | awk -F: '{print $NF}')
    $(lsb_release -c )
-   SSH Client: $SSH_CLIENT
+   SSH Client: $( echo "$SSH_CLIENT" | awk '{print $1}')
+   IPs:         $(hostname -I)
    " 0 0
  #--------------------------------------------------------------------------------------
 }

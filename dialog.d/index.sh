@@ -49,9 +49,9 @@ while : ; do
   
   shoices=$(
     dialog --stdout               \
-      --backtitle "VM  $(hostname)"  \
-      --title 'Configure VM'  \
-      --menu 'Select one option' \
+      --backtitle "VM  Manager (Version 1.0.0)"  \
+      --title "VM  $(hostname)"  \
+      --menu "Select one option" \
       0 0 0                         \
       Information                 'Display VM Informations' \
       $networking_menu_shoice     $networking_menu_description  \
