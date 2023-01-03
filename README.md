@@ -85,7 +85,7 @@ The struture the file needs to be like this:
 ### Change the owner of files for root
 
 ```
-sudo chown root.root -R /etc/profile.d/app_dialog.d/ /etc/profile.d/dialog.sh
+sudo chown root.$USER -R /etc/profile.d/app_dialog.d/ /etc/profile.d/dialog.sh
 
 ```
 
