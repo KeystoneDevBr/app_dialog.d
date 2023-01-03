@@ -22,7 +22,7 @@ if [ "$( (command -v netplan && command -v ip) | wc -l)" -ge 2 ]
   fi
 
 # Check if iptables was installed on Virtual Machine
-if [ "$(command -v iptables-save | wc -l)" !=  0 ]
+if [ "$(command -v iptables-persistent | wc -l)" !=  0 ]
   then
     iptables_menu_shoice="Iptables";
     iptables_menu_description='Iptables_Manager';
