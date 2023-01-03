@@ -10,6 +10,7 @@ It is a advanced  example of a Shell Script dialog for Ubuntu server.
 
 ![](./imags/apache_screen.png)
 
+
 # How to Install it
 ## Basics packages Installed
 
