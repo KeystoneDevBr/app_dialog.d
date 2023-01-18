@@ -12,6 +12,8 @@
 
 f_start_menu_apache(){
 #----------------------- Apache Manager Menu---------------------------------------------
+wait_exit="printf '\n \n  \e[1;33m Press CTL+C for Exit \e[0m ' && watch echo '...'  $> /dev/null "
+
 while : ; do
 
    shoices=$(
@@ -35,15 +37,15 @@ while : ; do
    [ $? = 1 ] && clear &&  break
 
    case "$shoices" in
-       Status)     clear && sudo systemctl status apache2 ;;
+       Status)     clear && sudo systemctl status apache2 ; eval $wait_exit;;
        Process)    watch -n 0.1  "ps -C apache2 --forest ; echo '\n \n Press CTL+C for exit'" ;;
        Conections) watch -n 0.1 "netstat -ant | grep -E ':80|:443' ; \
                                    echo '\n\n\n Total Conections:  $(ss -ant | grep -E ':80|:443' | wc -l )'; \
                                    echo '\n\n\n Press CTRL+C for exit;'" ;;
-       Stop)       clear; sudo systemctl stop apache2 && sudo systemctl status apache2 ;;
-       Start)      clear; sudo systemctl start apache2 && sudo systemctl status apache2 ;;
-       Reload)     clear; sudo /etc/init.d/apache2 force-reload && sudo systemctl status apache2 ;;
-       Restart)    clear; sudo /etc/init.d/apache2 restart  && sudo systemctl status apache2 ;;
+       Stop)       clear; sudo systemctl stop apache2 && sudo systemctl status apache2 ; eval $wait_exit;;
+       Start)      clear; sudo systemctl start apache2 && sudo systemctl status apache2 ; eval $wait_exit;;
+       Reload)     clear; sudo /etc/init.d/apache2 force-reload && sudo systemctl status apache2 ; eval $wait_exit;;
+       Restart)    clear; sudo /etc/init.d/apache2 restart  && sudo systemctl status apache2 ; eval $wait_exit;;
        Exit)       clear && exit ;;
    esac
 
