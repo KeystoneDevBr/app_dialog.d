@@ -99,7 +99,7 @@ sudo chmod 775 -R  /etc/profile.d/dialog.sh /etc/profile.d/app_dialog.d/
 
 ### Exit and start a new section
 ```
-exit
+Exit
 
 
 ssh  <cliente_name>@<server_address>
